@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
+<title>Pulse — социальная сеть</title>
+<style>
+:root{--blue:#3978f6;--blue-dark:#245fe0;--bg:#f5f7fb;--card:#fff;--text:#202638;--muted:#7b8498;--line:#e9edf4;--soft:#eef4ff;--shadow:0 8px 28px rgba(32,48,80,.06)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;position:sticky;top:0;z-index:10;padding:0 max(18px,calc((100% - 1200px)/2));gap:22px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:850;font-size:22px;letter-spacing:-.7px;white-space:nowrap}
+.logo-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:12px;background:var(--blue);color:#fff;font-size:20px;box-shadow:0 5px 12px #3978f633}
+.search-wrap{flex:1;max-width:520px;position:relative}
+.search-wrap input{width:100%;background:#f5f7fb;border:1px solid transparent;border-radius:12px;padding:11px 14px 11px 40px;outline:none}
+.search-wrap input:focus{border-color:#c9d9ff;background:#fff}
+.search-icon{position:absolute;left:14px;top:10px;color:#8b94a8}
+.top-actions{display:flex;align-items:center;gap:10px;margin-left:auto}
+.icon-btn{width:40px;height:40px;border:0;background:#f4f6fa;border-radius:12px;color:#59647b;font-size:18px;position:relative}
+.avatar{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:#e3edff;color:#285fc6;font-weight:800;flex-shrink:0}
+.layout{max-width:1200px;margin:24px auto;padding:0 18px;display:grid;grid-template-columns:220px minmax(0,610px) 270px;gap:22px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.sidebar{padding:14px;position:sticky;top:88px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;text-decoration:none;color:#626d82;margin:3px 0;font-weight:600;border:0;background:transparent;width:100%;text-align:left}
+.nav-item span{font-size:18px;width:22px;text-align:center}
+.nav-item.active,.nav-item:hover{background:var(--soft);color:var(--blue)}
+.create-btn,.primary{border:0;background:var(--blue);color:white;border-radius:12px;padding:11px 16px;font-weight:750;box-shadow:0 5px 14px #3978f62b}
+.create-btn{width:100%;margin-top:14px}
+.create-btn:hover,.primary:hover{background:var(--blue-dark)}
+.sidebar-note{margin:22px 8px 4px;color:#9aa2b2;font-size:12px}
+.main{min-width:0}
+.welcome{padding:22px;margin-bottom:16px;background:linear-gradient(120deg,#fff,#f4f8ff)}
+.welcome h1{font-size:24px;letter-spacing:-.7px;margin:0 0 5px}
+.welcome p{margin:0;color:var(--muted)}
+.composer{padding:16px;margin-bottom:16px}
+.composer-top{display:flex;gap:12px;align-items:flex-start}
+.composer textarea{resize:vertical;min-height:66px;max-height:200px;flex:1;border:0;outline:0;padding:8px 0;color:var(--text);background:transparent}
+.composer-bottom{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px;margin-top:8px}
+.helper{font-size:12px;color:#9aa2b2}
+.feed-head{display:flex;justify-content:space-between;align-items:center;margin:22px 3px 12px}
+.feed-head h2{font-size:17px;margin:0}
+.sort{border:1px solid var(--line);border-radius:10px;padding:7px 10px;background:white;color:#647087}
+.post{padding:18px;margin-bottom:15px}
+.post-head{display:flex;align-items:center;gap:11px}
+.post-author{font-weight:750}
+.post-meta{font-size:12px;color:#98a0b0}
+.more{margin-left:auto;border:0;background:transparent;color:#8c95a7;font-size:22px}
+.post-text{white-space:pre-wrap;margin:15px 0 12px;overflow-wrap:anywhere}
+.post-image{width:100%;max-height:330px;object-fit:cover;border-radius:13px;display:block;margin:12px 0;background:#eef2f8}
+.post-actions{display:flex;align-items:center;gap:7px;border-top:1px solid var(--line);padding-top:12px}
+.action{display:flex;align-items:center;gap:7px;border:0;background:transparent;color:#7d879b;border-radius:10px;padding:8px 10px}
+.action:hover{background:#f4f7fc}
+.action.liked{color:#f04f79}
+.action.share{margin-left:auto}
+.comments{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;display:none}
+.comments.open{display:block}
+.comment{display:flex;gap:8px;margin:10px 0;font-size:13px}
+.comment b{margin-right:5px}
+.comment-form{display:flex;gap:8px;margin-top:10px}
+.comment-form input{min-width:0;flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 11px;outline:none}
+.comment-form button{border:0;background:var(--soft);color:var(--blue);border-radius:10px;padding:0 13px;font-weight:700}
+.right-col{display:grid;gap:16px}
+.side-card{padding:17px}
+.side-card h3{font-size:15px;margin:0 0 14px}
+.person{display:flex;align-items:center;gap:10px;margin:13px 0}
+.person-info{min-width:0;flex:1}
+.person-info b{display:block;font-size:13px}
+.person-info small{color:#9aa2b2;font-size:11px}
+.follow{border:0;border-radius:9px;background:var(--soft);color:var(--blue);font-size:12px;font-weight:750;padding:7px 9px}
+.follow.following{background:#f0f2f6;color:#7c8596}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{border:0;background:#f2f6ff;color:#4774ca;border-radius:9px;padding:7px 10px;font-size:12px}
+.tag:hover{background:#e2ecff}
+.mini-stat{display:flex;justify-content:space-between;color:#788399;font-size:13px;padding:7px 0;border-bottom:1px solid #f0f2f6}
+.mini-stat:last-child{border:0}
+.profile-card{padding:24px;text-align:center;margin-bottom:16px}
+.profile-cover{height:90px;background:linear-gradient(120deg,#c8dcff,#edf3ff);border-radius:14px;margin:-8px -8px 0}
+.profile-avatar{width:76px;height:76px;border:5px solid white;margin:-38px auto 8px;position:relative;font-size:24px}
+.profile-card h2{margin:5px 0 0;font-size:20px}
+.profile-card p{color:var(--muted);margin:4px 0 16px}
+.profile-stats{display:flex;justify-content:center;gap:25px}
+.profile-stats b{display:block;font-size:18px}
+.profile-stats small{font-size:11px;color:var(--muted)}
+.empty{padding:36px 20px;text-align:center;color:var(--muted)}
+.empty .big{font-size:34px;margin-bottom:8px}
+.notice{padding:14px 16px;border-radius:13px;background:#f2f7ff;color:#5574aa;font-size:13px;margin-top:16px}
+footer{text-align:center;color:#a3aaba;font-size:12px;padding:24px}
+.mobile-nav{display:none}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#202638;color:white;border-radius:12px;padding:11px 17px;box-shadow:var(--shadow);z-index:50;font-size:13px;max-width:90vw}
+@media(max-width:1050px){.layout{grid-template-columns:190px minmax(0,1fr);max-width:850px}.right-col{display:none}}
+@media(max-width:650px){.topbar{height:60px;padding:0 14px;gap:12px}.logo{font-size:20px}.search-wrap{max-width:none}.search-wrap input{padding:9px 10px 9px 34px;font-size:13px}.search-icon{top:8px;left:11px}.top-actions{gap:5px}.top-actions .icon-btn{display:none}.top-actions .avatar{width:33px;height:33px}.layout{display:block;margin:14px auto;padding:0 12px}.sidebar{display:none}.welcome{padding:18px}.welcome h1{font-size:21px}.composer{padding:13px}.post{padding:14px}.post-image{max-height:250px}.mobile-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:20;justify-content:space-around;padding:7px 3px calc(7px + env(safe-area-inset-bottom))}.mobile-nav button{border:0;background:transparent;color:#818ba0;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:48px}.mobile-nav button span{font-size:20px}.mobile-nav button.active{color:var(--blue)}body{padding-bottom:72px}.feed-head{margin-top:18px}.profile-card{padding:18px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><div class="logo-mark">✳</div>Pulse</div>
+  <div class="search-wrap"><span class="search-icon">⌕</span><input id="search" type="search" placeholder="Поиск публикаций..." aria-label="Поиск публикаций"></div>
+  <div class="top-actions"><button class="icon-btn" onclick="showToast('Уведомлений пока нет')" aria-label="Уведомления">♧</button><div class="avatar">Я</div></div>
+</header>
+<div class="layout">
+  <aside class="sidebar card">
+    <button class="nav-item active" data-page="home" onclick="navigate('home')"><span>⌂</span>Главная</button>
+    <button class="nav-item" data-page="search" onclick="navigate('search')"><span>⌕</span>Поиск</button>
+    <button class="nav-item" data-page="notifications" onclick="navigate('notifications')"><span>♧</span>Уведомления</button>
+    <button class="nav-item" data-page="messages" onclick="navigate('messages')"><span>✉</span>Сообщения</button>
+    <button class="nav-item" data-page="friends" onclick="navigate('friends')"><span>♙</span>Друзья</button>
+    <button class="nav-item" data-page="profile" onclick="navigate('profile')"><span>◉</span>Мой профиль</button>
+    <button class="create-btn" onclick="document.getElementById('postText').focus();window.scrollTo({top:0,behavior:'smooth'})">＋ Создать пост</button>
+    <div class="sidebar-note">Твоя лента. Твои люди.<br>Твой Pulse. ✨</div>
+  </aside>
+  <main class="main" id="main">
+    <section class="welcome card"><h1>Привет, добро пожаловать! 👋</h1><p>Делись моментами и оставайся на связи.</p></section>
+    <section class="composer card">
+      <div class="composer-top"><div class="avatar">Я</div><textarea id="postText" maxlength="1200" placeholder="Что у тебя нового?"></textarea></div>
+      <div class="composer-bottom"><span class="helper">Будь собой — делись хорошим ✨</span><button class="primary" onclick="createPost()">Опубликовать</button></div>
+    </section>
+    <div class="feed-head"><h2 id="feedTitle">Твоя лента</h2><select class="sort" id="sort" onchange="render()"><option value="new">Сначала новые</option><option value="popular">Сначала популярные</option></select></div>
+    <section id="feed"></section>
+    <footer>Pulse · Маленькие моменты, большие связи</footer>
+  </main>
+  <aside class="right-col">
+    <section class="side-card card"><h3>✨ Возможно, знакомы</h3>
+      <div class="person"><div class="avatar">АК</div><div class="person-info"><b>Алексей Ким</b><small>Дизайнер</small></div><button class="follow" onclick="toggleFollow(this)">Подписаться</button></div>
+      <div class="person"><div class="avatar" style="background:#ffe9e0;color:#b85c38">АД</div><div class="person-info"><b>Алина Давыдова</b><small>Фотограф</small></div><button class="follow" onclick="toggleFollow(this)">Подписаться</button></div>
+      <div class="person"><div class="avatar" style="background:#e4f8ec;color:#278253">МТ</div><div class="person-info"><b>Максат Толеу</b><small>Студент</small></div><button class="follow" onclick="toggleFollow(this)">Подписаться</button></div>
+    </section>
+    <section class="side-card card"><h3>Популярные темы</h3><div class="tags"><button class="tag" onclick="searchTag('жизнь')">#Жизнь</button><button class="tag" onclick="searchTag('путешествия')">#Путешествия</button><button class="tag" onclick="searchTag('технологии')">#Технологии</button><button class="tag" onclick="searchTag('музыка')">#Музыка</button><button class="tag" onclick="searchTag('спорт')">#Спорт</button></div></section>
+    <section class="side-card card"><h3>Твой профиль</h3><div class="mini-stat"><span>Публикации</span><b id="statPosts">0</b></div><div class="mini-stat"><span>Лайки</span><b id="statLikes">0</b></div><div class="mini-stat"><span>Подписки</span><b id="statFollows">0</b></div><div class="notice">💡 Pulse пока работает на этом устройстве. Позже можно подключить настоящую базу данных.</div></section>
+  </aside>
+</div>
+<nav class="mobile-nav">
+  <button class="active" data-page="home" onclick="navigate('home')"><span>⌂</span>Главная</button>
+  <button data-page="search" onclick="navigate('search')"><span>⌕</span>Поиск</button>
+  <button onclick="document.getElementById('postText').focus();window.scrollTo({top:0,behavior:'smooth'})"><span>⊕</span>Создать</button>
+  <button data-page="friends" onclick="navigate('friends')"><span>♙</span>Друзья</button>
+  <button data-page="profile" onclick="navigate('profile')"><span>◉</span>Профиль</button>
+</nav>
+<script>
+const KEY='pulse_posts_v1';
+const starterPosts=[
+{id:1,name:'Александр Иванов',initials:'АИ',time:'Сегодня, 10:24',text:'Просто хороший день — иногда именно такие моменты запоминаются больше всего. ☀️ #жизнь',likes:12,liked:false,comments:[{name:'Динара',text:'Очень красиво сказано 💙'}],image:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80',mine:false},
+{id:2,name:'Динара Абдиева',initials:'ДА',time:'Сегодня, 09:15',text:'Иногда нужно просто остановиться и насладиться моментом. 🌿 #путешествия',likes:8,liked:false,comments:[],image:'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1200&q=80',mine:false},
+{id:3,name:'Максат Толеу',initials:'МТ',time:'Вчера',text:'Маленький шаг каждый день — и однажды ты удивишься, как далеко ушёл. 💪 #спорт',likes:5,liked:false,comments:[],image:'',mine:false}
+];
+let posts=loadPosts();let page='home';let searchTerm='';
+function loadPosts(){try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):starterPosts.map(p=>({...p,comments:[...p.comments]}))}catch(e){return starterPosts.map(p=>({...p,comments:[...p.comments]}))}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(posts))}catch(e){showToast('Не удалось сохранить: возможно, память браузера заполнена')}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function safeImage(s){return /^https:\/\/images\.unsplash\.com\//.test(s)?s:''}
+function render(){
+ const feed=document.getElementById('feed');let list=[...posts];
+ if(searchTerm)list=list.filter(p=>(p.text+' '+p.name).toLowerCase().includes(searchTerm.toLowerCase()));
+ if(page==='profile')list=list.filter(p=>p.mine);
+ if(document.getElementById('sort').value==='popular')list.sort((a,b)=>b.likes-a.likes);else list.sort((a,b)=>b.id-a.id);
+ document.getElementById('feedTitle').textContent=page==='profile'?'Мои публикации':searchTerm?'Результаты поиска':'Твоя лента';
+ if(page==='notifications'){feed.innerHTML='<div class="card empty"><div class="big">♧</div><b>Пока тихо</b><p>Новые уведомления появятся здесь.</p></div>';return}
+ if(page==='messages'){feed.innerHTML='<div class="card empty"><div class="big">✉</div><b>Сообщения</b><p>Это демонстрационная версия. Личные сообщения появятся после подключения серверной части.</p></div>';return}
+ if(page==='friends'){feed.innerHTML='<div class="card empty"><div class="big">♙</div><b>Находи своих людей</b><p>Попробуй подписаться на людей в блоке «Возможно, знакомы».</p></div>';return}
+ if(!list.length){feed.innerHTML='<div class="card empty"><div class="big">✧</div><b>Здесь пока пусто</b><p>'+(page==='profile'?'Ты ещё не создал публикаций.':'Ничего не найдено. Попробуй другой запрос.')+'</p></div>';updateStats();return}
+ feed.innerHTML=list.map(p=>`<article class="post card" id="post-${p.id}">
+  <div class="post-head"><div class="avatar">${escapeHTML(p.initials||'П')}</div><div><div class="post-author">${escapeHTML(p.name)}</div><div class="post-meta">${escapeHTML(p.time)}${p.mine?' · ты':''}</div></div>${p.mine?`<button class="more" aria-label="Удалить пост" onclick="deletePost(${p.id})">⋯</button>`:''}</div>
+  <div class="post-text">${escapeHTML(p.text)}</div>
+  ${safeImage(p.image)?`<img class="post-image" src="${safeImage(p.image)}" alt="Фото к публикации" loading="lazy">`:''}
+  <div class="post-actions"><button class="action ${p.liked?'liked':''}" onclick="likePost(${p.id})"><span>${p.liked?'♥':'♡'}</span> ${p.likes}</button><button class="action" onclick="toggleComments(${p.id})"><span>▢</span> ${p.comments.length} комментариев</button><button class="action share" onclick="sharePost(${p.id})"><span>↗</span> Поделиться</button></div>
+  <div class="comments" id="comments-${p.id}">${p.comments.map(c=>`<div class="comment"><div class="avatar" style="width:30px;height:30px;font-size:11px"> ${escapeHTML((c.name||'П').slice(0,2))}</div><div><b>${escapeHTML(c.name)}</b>${escapeHTML(c.text)}</div></div>`).join('')}
+   <form class="comment-form" onsubmit="addComment(event,${p.id})"><input maxlength="300" placeholder="Напиши комментарий..." aria-label="Комментарий"><button type="submit">Отправить</button></form>
+  </div></article>`).join('');
+ updateStats();
+}
+function createPost(){const input=document.getElementById('postText');const text=input.value.trim();if(!text){showToast('Напиши что-нибудь перед публикацией 🙂');input.focus();return}
+ posts.push({id:Date.now(),name:'Ты',initials:'Я',time:'Только что',text,likes:0,liked:false,comments:[],image:'',mine:true});save();input.value='';searchTerm='';document.getElementById('search').value='';page='home';setActive();render();showToast('Публикация добавлена!')}
+function likePost(id){const p=posts.find(x=>x.id===id);if(!p)return;p.liked=!p.liked;p.likes=Math.max(0,p.likes+(p.liked?1:-1));save();render()}
+function toggleComments(id){const el=document.getElementById('comments-'+id);if(el)el.classList.toggle('open')}
+function addComment(e,id){e.preventDefault();const input=e.target.querySelector('input');const text=input.value.trim();if(!text)return;const p=posts.find(x=>x.id===id);if(!p)return;p.comments.push({name:'Ты',text});save();render();const el=document.getElementById('comments-'+id);if(el)el.classList.add('open')}
+function deletePost(id){if(!confirm('Удалить эту публикацию?'))return;posts=posts.filter(p=>p.id!==id);save();render();showToast('Публикация удалена')}
+function sharePost(id){const p=posts.find(x=>x.id===id);if(!p)return;const text=p.name+': '+p.text;if(navigator.share)navigator.share({title:'Pulse',text}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>showToast('Текст публикации скопирован')).catch(()=>showToast(text));else showToast(text)}
+function toggleFollow(btn){const following=btn.classList.toggle('following');btn.textContent=following?'Подписан':'Подписаться';updateStats();showToast(following?'Ты подписался на пользователя':'Подписка отменена')}
+function searchTag(tag){document.getElementById('search').value=tag;searchTerm=tag;page='search';setActive();render();window.scrollTo({top:0,behavior:'smooth'})}
+function navigate(next){page=next;if(next!=='search'){searchTerm='';document.getElementById('search').value=''}if(next==='search'){document.getElementById('search').focus()}setActive();render();window.scrollTo({top:0,behavior:'smooth'})}
+function setActive(){document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page))}
+function updateStats(){document.getElementById('statPosts').textContent=posts.filter(p=>p.mine).length;document.getElementById('statLikes').textContent=posts.filter(p=>p.mine).reduce((n,p)=>n+p.likes,0);document.getElementById('statFollows').textContent=document.querySelectorAll('.follow.following').length}
+let toastTimer;function showToast(msg){let el=document.querySelector('.toast');if(!el){el=document.createElement('div');el.className='toast';document.body.appendChild(el)}el.textContent=msg;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.remove(),2600)}
+document.getElementById('search').addEventListener('input',e=>{searchTerm=e.target.value.trim();page=searchTerm?'search':'home';setActive();render()});
+render();
+</script>
+</body>
+</html>
